@@ -1,0 +1,45 @@
+#include <Windows.h>
+#include <iostream>
+#include <conio.h>
+
+DWORD WINAPI CheckEscape( LPVOID lpParam ) {
+        while(GetAsyncKeyState(VK_ESCAPE)==0){
+            //sleep 
+            Sleep(10);
+        }
+        exit(0);
+
+}
+
+int main()
+{
+    int dice;
+    char enter;
+
+    CreateThread( NULL, 0, CheckEscape,NULL  , 0, NULL);
+
+    srand(time(NULL));
+
+    std::cout << "****** DICE ROLL ******\n";
+    std::cout << "Press Esc to exit.\n";
+
+    do {
+        std::cout << "Enter which dice you want to roll (number): ";
+        std::cin >> dice;
+        if (std::cin.fail())
+        {
+            std::cout << "Please input correct value.\n";
+            std::cin.clear();
+            std::cin.ignore(256,'\n');
+        } else
+        {
+            int num = (rand() % dice) + 1;
+            std::cout << "You rolled: " << num << "\n";
+            std::cout << "Roll again?\n";
+            getch();
+        }
+        std::cout << "********************\n";
+    } while (GetAsyncKeyState(VK_ESCAPE)==0);
+
+    return 0;
+}
