@@ -1,8 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <Windows.h>
 
 std::string const BACKUPCIPHER = { "H;pga<Nb?8deKf_Ehi@kl]mSn{ZGXo-qrst}uvw(delete '\' after copying->)\"xz`~!#$V7%^M1&*\',./0Y2T3(45[69Ay:BC=D>FI|JLO+PQ)RUWj"};
+
+DWORD WINAPI CheckEscape( LPVOID lpParam ) {
+        while(GetAsyncKeyState(VK_ESCAPE)==0){
+            //sleep 
+            Sleep(10);
+        }
+        exit(0);
+}
 
 int findIt(char codeCharA[], int size, char value)
 {
@@ -38,13 +47,23 @@ int main()
     char originalChar;
     int index;
 
-    std::ifstream inFile;
-
     char choice;
+
+    std::ifstream inFile;
+    inFile.open("code.txt");
+    // Set position to the end of the file
+    inFile.seekg(0, std::ios::end);  
     if (inFile.tellg() == 0)
     { 
         std::cout << "The file containing the cipher is empty." << std::endl;
+        std::cout << "You can't use the program without the cipher!\n" << std::endl;
     }
+    inFile.close();
+
+    CreateThread( NULL, 0, CheckEscape,NULL  , 0, NULL);
+
+    std::cout << "Press Esc to exit." << std::endl;
+
     std::cout << "****** CIPHER CODE ******" << std::endl;
     std::cout << "Do you want to:\n";
     std::cout << "Encode a message (W)rite\n";
@@ -83,16 +102,18 @@ int main()
 
             // writing the cipher to text file
             std::ofstream eFile;
-            eFile.open("cipher.txt");
+            eFile.open("cipher.txt", std::ofstream::out | std::ofstream::trunc);
             if (!eFile.is_open())
             {
                 std::cout << "File could not be opened (writing)" << std::endl;
-            }
-            eFile << code;
-            if (eFile.bad())
+            } else
             {
-                // failed to write
-                std::cout << "Operation failed, message saved incorrectly" << std::endl;
+                eFile << code;
+                if (eFile.bad())
+                {
+                    // failed to write
+                    std::cout << "Operation failed, message saved incorrectly" << std::endl;
+                }
             }
             eFile.close();
         }
@@ -100,10 +121,9 @@ int main()
     {
         // read cipher key
         inFile.open("code.txt");
-
         if (!inFile.is_open())
         {
-            std::cout << "File could not be opened (writing)" << std::endl;
+            std::cout << "Cipher file could not be opened" << std::endl;
         }
         else 
         {
@@ -112,6 +132,7 @@ int main()
                 inFile >> codeChar[i];
             }
         }
+        inFile.close();
         // reading only
         std::ifstream readFile;
         readFile.open("cipher.txt");
@@ -143,18 +164,14 @@ int main()
                 originalChar = index + 32;
                 newString += originalChar;
             }
-            readFile.close();
+            //
             std::cout << "The coded message:\n" << whole_file << std::endl;
             std::cout << "The decoded message:\n" << newString << std::endl;
         }
+        readFile.close();
     }
 
     std::cout << "**************************" << std::endl;
 
     return 0;
 }
-
-
-
-
-
