@@ -2,21 +2,10 @@
 #include <iostream>
 #include <conio.h>
 
-DWORD WINAPI CheckEscape( LPVOID lpParam ) {
-        while(GetAsyncKeyState(VK_ESCAPE)==0){
-            //sleep 
-            Sleep(10);
-        }
-        exit(0);
-
-}
-
 int main()
 {
     int dice;
     char enter;
-
-    CreateThread( NULL, 0, CheckEscape,NULL  , 0, NULL);
 
     srand(time(NULL));
 
@@ -28,6 +17,7 @@ int main()
         std::cin >> dice;
         if (std::cin.fail())
         {
+            // reset dice input
             std::cout << "Please input correct value.\n";
             std::cin.clear();
             std::cin.ignore(256,'\n');
@@ -36,10 +26,13 @@ int main()
             int num = (rand() % dice) + 1;
             std::cout << "You rolled: " << num << "\n";
             std::cout << "Roll again?\n";
+            // press any button to continue
             getch();
         }
-        std::cout << "********************\n";
+    // press Esc to exit
     } while (GetAsyncKeyState(VK_ESCAPE)==0);
+
+    std::cout << "***********************\n";
 
     return 0;
 }
