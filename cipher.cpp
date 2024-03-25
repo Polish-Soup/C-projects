@@ -39,12 +39,15 @@ int main()
     int index;
 
     std::ifstream inFile;
+    inFile.open("code.txt");
 
     char choice;
     if (inFile.tellg() == 0)
     { 
         std::cout << "The file containing the cipher is empty." << std::endl;
+        std::cout << "You can't use the program without the cipher!\n" << std::endl;
     }
+    inFile.close();
     std::cout << "****** CIPHER CODE ******" << std::endl;
     std::cout << "Do you want to:\n";
     std::cout << "Encode a message (W)rite\n";
@@ -153,8 +156,3 @@ int main()
 
     return 0;
 }
-
-
-
-
-
